@@ -4,7 +4,24 @@ import .state
 
 import .game
 
-local curState : state = (game)
+using import enum
+
+inline gen-method (name)
+    inline (self args...) 
+        'apply self 
+            inline (T self) 
+                name self args...
+
+enum State
+    gameState : game
+
+    let init = (gen-method 'init)
+    let update = (gen-method 'update)
+    let keyDown = (gen-method 'keyDown)
+    let draw = (gen-method 'draw)
+    let windowInfo = (gen-method 'windowInfo)
+
+local curState : State = (State.gameState (game))
 
 local event : sdl.Event
 local shouldQuit : bool = false
@@ -31,7 +48,7 @@ while (not shouldQuit)
         if (event.type == sdl.QUIT)
             shouldQuit = true
         elseif (event.type == sdl.KEYDOWN)
-            'keydown curState event.key.keysym.sym
+            'keyDown curState event.key.keysym.sym
     
     'draw curState surface
 

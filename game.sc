@@ -89,7 +89,7 @@ struct game < state
         sdl.FillRect
             surface
             &tempRect
-            color
+            color as u32
 
     fn windowInfo(self)
         returning i32 i32 string
@@ -103,11 +103,11 @@ struct game < state
         sdl.FillRect surface null 0
 
         #draw head
-        'drawTile self self.snakeHeadPos.x self.snakeHeadPos.y 0x00ff00
+        'drawTile self surface self.snakeHeadPos.x self.snakeHeadPos.y 0x00ff00
 
         #draw body
         for pos in self.bodyParts
-            'drawTile self pos.x pos.y 0x00ff00
+            'drawTile self surface pos.x pos.y 0x00ff00
         
         #draw food
-        'drawTile self self.foodPos.x self.foodPos.y 0xff0000
+        'drawTile self surface self.foodPos.x self.foodPos.y 0xff0000
