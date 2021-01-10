@@ -21,14 +21,19 @@ struct game < state
 
     bodyParts : (Array vector2)
 
-    moveDir : vector2 = (vector2 (x = 1) (y = 0))
+    moveDir : vector2
     futureDir : vector2
 
     foodPos : vector2
     
-    currentLength : i32 = 3
+    initialLength : i32 = 3
+    currentLength : i32
 
     fn init(self)
+        self.running = true
+
+        self.bodyParts = ((Array vector2))
+
         self.snakeHeadPos =
             vector2
                 x =
@@ -36,7 +41,11 @@ struct game < state
                 y = 
                     self.mapHeight // 2
 
+        self.moveDir = (vector2 (x = 1) (y = 0))
+
         self.futureDir = self.moveDir
+
+        self.currentLength = self.initialLength
 
         'randomizeFood self;
 
@@ -55,6 +64,21 @@ struct game < state
         if (self.snakeHeadPos == self.foodPos)
             self.currentLength += 1
             'randomizeFood self;
+        
+        if
+            or
+                (self.snakeHeadPos.x < 0)
+                (self.snakeHeadPos.x >= self.mapWidth)
+                (self.snakeHeadPos.y < 0)
+                (self.snakeHeadPos.y >= self.mapHeight)
+            
+            'fail self
+            return
+
+        for pos in self.bodyParts
+            if (self.snakeHeadPos == pos)
+                'fail self
+                break
 
     fn keyDown(self key)
         switch key
@@ -66,18 +90,21 @@ struct game < state
             self.futureDir = (vector2 (x = 1) (y = 0))
         case sdl.SDLK_LEFT
             self.futureDir = (vector2 (x = -1) (y = 0))
+        case sdl.SDLK_r
+            'init self
         default
             ;
         
+    running : bool = true
     tickTimer : f32 = 0
     tickInterval : f32 = 0.2
 
     fn update(self dt)
-        self.tickTimer += dt
-
-        if (self.tickTimer >= self.tickInterval)
-            self.tickTimer = 0
-            'tick self;
+        if self.running
+            self.tickTimer += dt
+            if (self.tickTimer >= self.tickInterval)
+                self.tickTimer = 0
+                'tick self;
 
     fn drawTile(self surface x y color)
         local tempRect = 
@@ -111,3 +138,11 @@ struct game < state
         
         #draw food
         'drawTile self surface self.foodPos.x self.foodPos.y 0xff0000
+
+    fn fail(self)
+        self.running = false
+        sdl.ShowSimpleMessageBox
+            sdl.MESSAGEBOX_INFORMATION
+            "You lose!"
+            "Score: " .. (tostring (self.currentLength - self.initialLength)) .. "\nPress R to restart"
+            null
