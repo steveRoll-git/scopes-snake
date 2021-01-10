@@ -49,12 +49,12 @@ while (not shouldQuit)
             shouldQuit = true
         elseif (event.type == sdl.KEYDOWN)
             'keyDown curState event.key.keysym.sym
+
+    'update curState (1 / 60) #fake deltatime at the moment
     
     'draw curState surface
 
     sdl.UpdateWindowSurface window
-
-    'update curState (1 / 60) #fake deltatime at the moment
 
     sdl.Delay 16
 
