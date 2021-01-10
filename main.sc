@@ -3,6 +3,7 @@ import .sdl
 import .state
 
 import .game
+import .splash
 
 using import enum
 
@@ -14,6 +15,7 @@ inline gen-method (name)
 
 enum State
     gameState : game
+    splashState : splash
 
     let init = (gen-method 'init)
     let update = (gen-method 'update)
@@ -21,7 +23,7 @@ enum State
     let draw = (gen-method 'draw)
     let windowInfo = (gen-method 'windowInfo)
 
-local curState : State = (State.gameState (game))
+global curState : State = (State.splashState (game))
 
 local event : sdl.Event
 local shouldQuit : bool = false
